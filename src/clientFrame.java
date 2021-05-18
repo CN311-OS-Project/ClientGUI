@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * @author acer
  */
 public class clientFrame extends javax.swing.JFrame {
-
+    private static String Chat = "Chat", Game = "Game", draw = "Draw";
     /**
      * Creates new form clientFrame
      */
@@ -49,7 +49,11 @@ public class clientFrame extends javax.swing.JFrame {
 
         try {
             while ((serverResponse = input.readLine()) != null) {
-                clientArea.append(serverResponse + "\n");
+                String temp1[] = serverResponse.split(",");
+                if(temp1[2].equals(Chat)){
+                    clientArea.append(temp1[0] + ": " + temp1[1] + "\n");
+                }
+                
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -192,23 +196,23 @@ public class clientFrame extends javax.swing.JFrame {
     // Send Button here
     private void sendBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendBActionPerformed
         // TODO add your handling code here:
-            sendData();
+            sendData_chat();
     }//GEN-LAST:event_sendBActionPerformed
 
     private void clientTypeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_clientTypeKeyPressed
         // TODO add your handling code here:
         if(clientType.getText() != "") {
             if(evt.getKeyCode()==KeyEvent.VK_ENTER){
-            sendData();
+                sendData_chat();
 
             }
             
         }
     }//GEN-LAST:event_clientTypeKeyPressed
     
-    private void sendData() {
+    private void sendData_chat() {
             typingText = clientType.getText();
-            output.println(username + "," + typingText);
+            output.println(username + "," + typingText + "," + Chat);
             clientType.setText("");
             clientType.requestFocus();
     }
