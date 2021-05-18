@@ -1,11 +1,14 @@
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,9 +33,11 @@ public class clientFrame extends javax.swing.JFrame {
     
     String username, typingText;
     PrintWriter output;
-    Socket socket;
+    Socket socket;    
+    Boolean isConnected, isIt;
     
-    Boolean isConnected;
+    Graphics g;
+    int currentX, currentY, oldX, oldY, counter;
 
     public class ServerConnection implements Runnable {
     private BufferedReader input;
@@ -72,6 +77,7 @@ public class clientFrame extends javax.swing.JFrame {
         initComponents();
         isConnected = false;
         clientType.setText("");
+        g = drawScreen.getGraphics();
 
     }
 
@@ -91,6 +97,10 @@ public class clientFrame extends javax.swing.JFrame {
         connectB = new javax.swing.JButton();
         clientType = new javax.swing.JTextField();
         sendB = new javax.swing.JButton();
+        drawScreen = new javax.swing.JPanel();
+        redB = new javax.swing.JButton();
+        clearB = new javax.swing.JButton();
+        timeLebel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -127,44 +137,115 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
 
+        drawScreen.setBackground(new java.awt.Color(255, 255, 255));
+        drawScreen.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                drawScreenMouseDragged(evt);
+            }
+        });
+        drawScreen.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                drawScreenMousePressed(evt);
+            }
+        });
+        drawScreen.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                drawScreenPropertyChange(evt);
+            }
+        });
+
+        javax.swing.GroupLayout drawScreenLayout = new javax.swing.GroupLayout(drawScreen);
+        drawScreen.setLayout(drawScreenLayout);
+        drawScreenLayout.setHorizontalGroup(
+            drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 857, Short.MAX_VALUE)
+        );
+        drawScreenLayout.setVerticalGroup(
+            drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        redB.setText("red");
+        redB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redBActionPerformed(evt);
+            }
+        });
+
+        clearB.setText("clear");
+        clearB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearBActionPerformed(evt);
+            }
+        });
+
+        timeLebel.setText("60");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(604, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(drawScreen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(redB)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(clearB)))
+                    .addComponent(timeLebel))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(clientSP, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
                         .addComponent(enterUser)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(connectB))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
                         .addComponent(clientType)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sendB)))
-                .addGap(20, 20, 20))
+                        .addComponent(sendB))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(clientSP, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(68, 68, 68)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(enterUser)
-                    .addComponent(connectB))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(68, 68, 68)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(enterUser)
+                            .addComponent(connectB)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(timeLebel)))
                 .addGap(18, 18, 18)
-                .addComponent(clientSP, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendB))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(drawScreen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clientSP, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(sendB)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(redB)
+                            .addComponent(clearB))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userFieldActionPerformed
@@ -209,6 +290,39 @@ public class clientFrame extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_clientTypeKeyPressed
+
+    private void redBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redBActionPerformed
+        // TODO add your handling code here:
+        g.setColor(Color.red);
+    }//GEN-LAST:event_redBActionPerformed
+
+    private void clearBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearBActionPerformed
+        // TODO add your handling code here:
+        drawScreen.repaint();
+    }//GEN-LAST:event_clearBActionPerformed
+
+    private void drawScreenMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_drawScreenMousePressed
+        // TODO add your handling code here:
+        oldX = evt.getX();
+        oldY = evt.getY();
+    }//GEN-LAST:event_drawScreenMousePressed
+
+    private void drawScreenMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_drawScreenMouseDragged
+        // TODO add your handling code here:
+        currentX = evt.getX();
+        currentY = evt.getY();
+        
+        if(g != null) {       
+            g.fillOval(oldX, oldY, 10, 10);
+            oldX = currentX;
+            oldY = currentY;
+        }
+    }//GEN-LAST:event_drawScreenMouseDragged
+
+    private void drawScreenPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_drawScreenPropertyChange
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_drawScreenPropertyChange
     
     private void sendData_chat() {
             typingText = clientType.getText();
@@ -258,12 +372,16 @@ public class clientFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clearB;
     private javax.swing.JTextArea clientArea;
     private javax.swing.JScrollPane clientSP;
     private javax.swing.JTextField clientType;
     private javax.swing.JButton connectB;
+    private javax.swing.JPanel drawScreen;
     private javax.swing.JLabel enterUser;
+    private javax.swing.JButton redB;
     private javax.swing.JButton sendB;
+    private javax.swing.JLabel timeLebel;
     private javax.swing.JTextField userField;
     // End of variables declaration//GEN-END:variables
 }
