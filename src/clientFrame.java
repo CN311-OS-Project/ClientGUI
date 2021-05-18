@@ -1,4 +1,5 @@
 
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,6 +31,8 @@ public class clientFrame extends javax.swing.JFrame {
     String username, typingText;
     PrintWriter output;
     Socket socket;
+    
+    Boolean isConnected;
 
     public class ServerConnection implements Runnable {
     private BufferedReader input;
@@ -63,8 +66,8 @@ public class clientFrame extends javax.swing.JFrame {
 
     public clientFrame() throws IOException{
         initComponents();
-        socket = new Socket(SERVER_IP, SERVER_PORT);
-        output = new PrintWriter(socket.getOutputStream(), true);
+        isConnected = false;
+        clientType.setText("");
 
     }
 
@@ -104,6 +107,12 @@ public class clientFrame extends javax.swing.JFrame {
         connectB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 connectBActionPerformed(evt);
+            }
+        });
+
+        clientType.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                clientTypeKeyPressed(evt);
             }
         });
 
@@ -163,11 +172,13 @@ public class clientFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         clientArea.append("Connecting to server..\n");
         try {
-         
+            socket = new Socket(SERVER_IP, SERVER_PORT);
+            output = new PrintWriter(socket.getOutputStream(), true);
             ServerConnection connection = new ServerConnection(socket);
-
+                
             username = userField.getText();
             userField.setEditable(false);
+            connectB.setEnabled(false);
             clientArea.append("My name " + username +"\n");
             new Thread(connection).start();
 
@@ -181,21 +192,26 @@ public class clientFrame extends javax.swing.JFrame {
     // Send Button here
     private void sendBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendBActionPerformed
         // TODO add your handling code here:
-            //username+","+input
+            sendData();
+    }//GEN-LAST:event_sendBActionPerformed
 
+    private void clientTypeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_clientTypeKeyPressed
+        // TODO add your handling code here:
+        if(clientType.getText() != "") {
+            if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            sendData();
+
+            }
+            
+        }
+    }//GEN-LAST:event_clientTypeKeyPressed
+    
+    private void sendData() {
             typingText = clientType.getText();
             output.println(username + "," + typingText);
             clientType.setText("");
             clientType.requestFocus();
- 
-        
-
-            
-            
-
-
-    }//GEN-LAST:event_sendBActionPerformed
-    
+    }
     
     /**
      * @param args the command line arguments
