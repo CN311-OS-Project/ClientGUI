@@ -184,7 +184,9 @@ public class clientFrame extends javax.swing.JFrame {
             //username+","+input
 
             typingText = clientType.getText();
-            output.println(username + "," + typingText + "\n");
+            output.println(username + "," + typingText);
+            clientType.setText("");
+            clientType.requestFocus();
  
         
 
