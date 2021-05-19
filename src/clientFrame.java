@@ -34,7 +34,7 @@ public class clientFrame extends javax.swing.JFrame {
     String username, typingText;
     PrintWriter output;
     Socket socket;    
-    Boolean isConnected, isIt;
+    Boolean isConnected, isIt, isDraw = true, isWaitPlayer = true;
     
     Graphics g;
     int currentX, currentY, oldX, oldY, counter;
@@ -75,9 +75,10 @@ public class clientFrame extends javax.swing.JFrame {
 
     public clientFrame() throws IOException{
         initComponents();
-        isConnected = false;
         clientType.setText("");
         g = drawScreen.getGraphics();
+        clientType.setEditable(false);
+        sendB.setEnabled(false);
 
     }
 
@@ -98,6 +99,7 @@ public class clientFrame extends javax.swing.JFrame {
         clientType = new javax.swing.JTextField();
         sendB = new javax.swing.JButton();
         drawScreen = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         redB = new javax.swing.JButton();
         clearB = new javax.swing.JButton();
         timeLebel = new javax.swing.JLabel();
@@ -154,31 +156,41 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+        jLabel1.setText("Waitting For Player...");
+
         javax.swing.GroupLayout drawScreenLayout = new javax.swing.GroupLayout(drawScreen);
         drawScreen.setLayout(drawScreenLayout);
         drawScreenLayout.setHorizontalGroup(
             drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 857, Short.MAX_VALUE)
+            .addGroup(drawScreenLayout.createSequentialGroup()
+                .addGap(187, 187, 187)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(208, Short.MAX_VALUE))
         );
         drawScreenLayout.setVerticalGroup(
             drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(drawScreenLayout.createSequentialGroup()
+                .addGap(247, 247, 247)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        redB.setText("red");
+        redB.setText("Red");
         redB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 redBActionPerformed(evt);
             }
         });
 
-        clearB.setText("clear");
+        clearB.setText("Clear");
         clearB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearBActionPerformed(evt);
             }
         });
 
+        timeLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         timeLebel.setText("60");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -262,8 +274,12 @@ public class clientFrame extends javax.swing.JFrame {
             ServerConnection connection = new ServerConnection(socket);
                 
             username = userField.getText();
+            
             userField.setEditable(false);
             connectB.setEnabled(false);
+            clientType.setEditable(true);
+            sendB.setEnabled(true);
+            
             clientArea.append("My name " + username +"\n");
             new Thread(connection).start();
 
@@ -312,11 +328,17 @@ public class clientFrame extends javax.swing.JFrame {
         currentX = evt.getX();
         currentY = evt.getY();
         
-        if(g != null) {       
-            g.fillOval(oldX, oldY, 10, 10);
-            oldX = currentX;
-            oldY = currentY;
+        try{
+            if(g != null && isDraw && !isWaitPlayer) {       
+              g.fillOval(oldX, oldY, 10, 10);
+              oldX = currentX;
+              oldY = currentY;
+          }  
         }
+        catch(Exception e) {
+            
+        }
+        
     }//GEN-LAST:event_drawScreenMouseDragged
 
     private void drawScreenPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_drawScreenPropertyChange
@@ -379,6 +401,7 @@ public class clientFrame extends javax.swing.JFrame {
     private javax.swing.JButton connectB;
     private javax.swing.JPanel drawScreen;
     private javax.swing.JLabel enterUser;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton redB;
     private javax.swing.JButton sendB;
     private javax.swing.JLabel timeLebel;
