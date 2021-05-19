@@ -1,5 +1,7 @@
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.util.Scanner;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -34,11 +37,32 @@ public class clientFrame extends javax.swing.JFrame {
     String username, typingText;
     PrintWriter output;
     Socket socket;    
-    Boolean isConnected, isIt, isDraw = true, isWaitPlayer = true;
+    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true;
     
     Graphics g;
     int currentX, currentY, oldX, oldY, counter;
+    
+    int counters = 15;
+    
+    Timer T = new Timer(1000, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+                
 
+               
+               counters--;  
+               timeLebel.setText(""+counters);
+         
+               
+               if(counters == -1 ) {
+                   counters = 15;
+                   timeLebel.setText(""+counters);
+
+               }   
+            
+            
+            
+        }
+    });
     public class ServerConnection implements Runnable {
     private BufferedReader input;
     private String serverResponse;
@@ -105,6 +129,11 @@ public class clientFrame extends javax.swing.JFrame {
         timeLebel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                formPropertyChange(evt);
+            }
+        });
 
         clientArea.setColumns(20);
         clientArea.setRows(5);
@@ -191,7 +220,7 @@ public class clientFrame extends javax.swing.JFrame {
         });
 
         timeLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        timeLebel.setText("60");
+        timeLebel.setText("15");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -279,7 +308,8 @@ public class clientFrame extends javax.swing.JFrame {
             connectB.setEnabled(false);
             clientType.setEditable(true);
             sendB.setEnabled(true);
-            
+                     
+            T.start();
             clientArea.append("My name " + username +"\n");
             new Thread(connection).start();
 
@@ -345,6 +375,14 @@ public class clientFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
 
     }//GEN-LAST:event_drawScreenPropertyChange
+
+    private void formPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_formPropertyChange
+        // TODO add your handling code here:
+        
+        
+    }//GEN-LAST:event_formPropertyChange
+    
+    
     
     private void sendData_chat() {
             typingText = clientType.getText();
