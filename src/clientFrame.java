@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.TimerTask;
@@ -26,7 +28,7 @@ import javax.swing.Timer;
  * @author acer
  */
 public class clientFrame extends javax.swing.JFrame {
-    private static String Chat = "Chat", Game = "Game", draw = "Draw";
+    private static String Chat = "Chat", Game = "Game", draw = "Draw", stateUser = "Username", len = "Array Length";
     /**
      * Creates new form clientFrame
      */
@@ -34,10 +36,12 @@ public class clientFrame extends javax.swing.JFrame {
     private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 9090;
     
+    private ArrayList<String> users;
+    
     String username, typingText;
     PrintWriter output;
     Socket socket;    
-    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true;
+    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false;
     
     Graphics g;
     int currentX, currentY, oldX, oldY, counter;
@@ -75,12 +79,30 @@ public class clientFrame extends javax.swing.JFrame {
 
     @Override
     public void run() {
-
+        output.println(username +","+ stateUser);
         try {
             while ((serverResponse = input.readLine()) != null) {
                 String temp1[] = serverResponse.split(",");
-                if(temp1[2].equals(Chat)){
+                int lastIndex = temp1.length - 1;
+                
+                if(temp1[lastIndex].equals(Chat)){
                     clientArea.append(temp1[0] + ": " + temp1[1] + "\n");
+                }
+                else if(temp1[lastIndex].equals(stateUser)) {                
+                    clientArea.append(temp1[0]+" has joined\n");                                     
+//                     if(users.size() > 1) {
+//                        clientArea.append("There is 2 People");
+//                        waitLebel.setVisible(false);
+//                        startGame = true;
+//                    }
+//                    if(users.get(0).equals(username) ) {
+//                        isDraw = true;
+//                    }
+           
+                }
+                
+                else if(temp1[lastIndex].equals(len)){
+                    clientArea.append("Online User: "+ temp1[0]);  
                 }
                 
             }
@@ -99,6 +121,7 @@ public class clientFrame extends javax.swing.JFrame {
 
     public clientFrame() throws IOException{
         initComponents();
+        users = new ArrayList<>();
         clientType.setText("");
         g = drawScreen.getGraphics();
         clientType.setEditable(false);
@@ -123,10 +146,10 @@ public class clientFrame extends javax.swing.JFrame {
         clientType = new javax.swing.JTextField();
         sendB = new javax.swing.JButton();
         drawScreen = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         redB = new javax.swing.JButton();
         clearB = new javax.swing.JButton();
         timeLebel = new javax.swing.JLabel();
+        waitLebel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addPropertyChangeListener(new java.beans.PropertyChangeListener() {
@@ -185,24 +208,15 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
-        jLabel1.setText("Waitting For Player...");
-
         javax.swing.GroupLayout drawScreenLayout = new javax.swing.GroupLayout(drawScreen);
         drawScreen.setLayout(drawScreenLayout);
         drawScreenLayout.setHorizontalGroup(
             drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(drawScreenLayout.createSequentialGroup()
-                .addGap(187, 187, 187)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(208, Short.MAX_VALUE))
+            .addGap(0, 857, Short.MAX_VALUE)
         );
         drawScreenLayout.setVerticalGroup(
             drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(drawScreenLayout.createSequentialGroup()
-                .addGap(247, 247, 247)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 572, Short.MAX_VALUE)
         );
 
         redB.setText("Red");
@@ -222,6 +236,9 @@ public class clientFrame extends javax.swing.JFrame {
         timeLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         timeLebel.setText("15");
 
+        waitLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        waitLebel.setText("Waitting For Player...");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -229,29 +246,33 @@ public class clientFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(drawScreen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(redB)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(clearB)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(drawScreen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(redB)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(clearB)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addComponent(clientType)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(sendB))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addComponent(clientSP, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(waitLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(enterUser)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(connectB))))))
                     .addComponent(timeLebel))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(enterUser)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(connectB))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(clientType)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sendB))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(clientSP, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -259,7 +280,8 @@ public class clientFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(68, 68, 68)
+                        .addComponent(waitLebel)
+                        .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(enterUser)
@@ -303,13 +325,12 @@ public class clientFrame extends javax.swing.JFrame {
             ServerConnection connection = new ServerConnection(socket);
                 
             username = userField.getText();
-            
+                                   
             userField.setEditable(false);
             connectB.setEnabled(false);
             clientType.setEditable(true);
             sendB.setEnabled(true);
                      
-            T.start();
             clientArea.append("My name " + username +"\n");
             new Thread(connection).start();
 
@@ -359,7 +380,7 @@ public class clientFrame extends javax.swing.JFrame {
         currentY = evt.getY();
         
         try{
-            if(g != null && isDraw && !isWaitPlayer) {       
+            if(g != null && isDraw && startGame) {       
               g.fillOval(oldX, oldY, 10, 10);
               oldX = currentX;
               oldY = currentY;
@@ -378,6 +399,10 @@ public class clientFrame extends javax.swing.JFrame {
 
     private void formPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_formPropertyChange
         // TODO add your handling code here:
+        if(startGame) {
+           T.start(); 
+        }
+        
         
         
     }//GEN-LAST:event_formPropertyChange
@@ -439,10 +464,10 @@ public class clientFrame extends javax.swing.JFrame {
     private javax.swing.JButton connectB;
     private javax.swing.JPanel drawScreen;
     private javax.swing.JLabel enterUser;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton redB;
     private javax.swing.JButton sendB;
     private javax.swing.JLabel timeLebel;
     private javax.swing.JTextField userField;
+    private javax.swing.JLabel waitLebel;
     // End of variables declaration//GEN-END:variables
 }
