@@ -28,7 +28,8 @@ import javax.swing.Timer;
  * @author acer
  */
 public class clientFrame extends javax.swing.JFrame {
-    private static String Chat = "Chat", Game = "Game", draw = "Draw", stateUser = "Username", len = "Array Length", turn = "Player Turn";
+    private static String Chat = "Chat", Game = "Game", draw = "Draw", stateUser = "Username", len = "Array Length", turn = "Player Turn"
+            ,coordinate = "Send coordiante", timeOut = "Time Out";
     /**
      * Creates new form clientFrame
      */
@@ -42,10 +43,12 @@ public class clientFrame extends javax.swing.JFrame {
     String username, typingText;
     PrintWriter output;
     Socket socket;    
-    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false;
+    Boolean isConnected = false, isIt, isDraw, isWaitPlayer = true, startGame = false;
     
     Graphics g;
-    int currentX, currentY, oldX, oldY, counter;
+    int currentX = 0, currentY= 0, oldX= 0, oldY= 0, counter;
+    
+    int serverX = 0, serverY = 0;
     
     int counters = 15;
     
@@ -55,6 +58,9 @@ public class clientFrame extends javax.swing.JFrame {
                timeLebel.setText(""+counters);          
                if(counters == -1 ) {
                    counters = 15;
+                   if(isDraw) {
+                     output.println("time out"+","+timeOut);    
+                   }                                 
                    timeLebel.setText(""+counters);
                }
         }
@@ -90,12 +96,26 @@ public class clientFrame extends javax.swing.JFrame {
                     
                 } else if(temp1[lastIndex].equals(turn) && usersOnline > 1 ) {
                     clientArea.append(temp1[0]+" turn");
+                    waitLebel.setText("");
+                    ansWord.setText(temp1[1]);
+                    startGame = true;
+                    T.start();
                     if (username.equals(temp1[0])){
-                        clientArea.append("is Draw\n");
+                        clientArea.append("is Draw\n");                      
+                        isDraw = true;                    
                     } else {
-                        clientArea.append("not Draw\n");
+                        clientArea.append("not Draw\n");    
+                        isDraw = false;
                     }
                 }
+                
+                else if(temp1[lastIndex].equals(coordinate)) {
+                    serverX = Integer.parseInt(temp1[0]);
+                    serverY = Integer.parseInt(temp1[1]);
+                    serverDraw(serverX,serverY);
+
+                }
+                
 
                 
             }
@@ -111,10 +131,21 @@ public class clientFrame extends javax.swing.JFrame {
         
     }
 }
+    public void serverDraw(int serverX, int serverY) {
+        try{
+            if(!isDraw) {
+            g.fillOval(serverX, serverY, 10, 10);
+            }
+            
+        } catch(Exception e) {
+            
+        }
+    }
 
 
     public clientFrame() throws IOException{
         initComponents();
+        isDraw = false;
         users = new ArrayList<>();
         clientType.setText("");
         g = drawScreen.getGraphics();
@@ -144,6 +175,7 @@ public class clientFrame extends javax.swing.JFrame {
         redB = new javax.swing.JButton();
         clearB = new javax.swing.JButton();
         timeLebel = new javax.swing.JLabel();
+        ansWord = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addPropertyChangeListener(new java.beans.PropertyChangeListener() {
@@ -239,6 +271,9 @@ public class clientFrame extends javax.swing.JFrame {
         timeLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         timeLebel.setText("15");
 
+        ansWord.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        ansWord.setText("Word...");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -269,7 +304,10 @@ public class clientFrame extends javax.swing.JFrame {
                                 .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(connectB))))
-                    .addComponent(timeLebel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(timeLebel)
+                        .addGap(337, 337, 337)
+                        .addComponent(ansWord, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -277,11 +315,12 @@ public class clientFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(54, 54, 54)
+                        .addGap(33, 33, 33)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(enterUser)
-                            .addComponent(connectB)))
+                            .addComponent(connectB)
+                            .addComponent(ansWord)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(timeLebel)))
@@ -368,8 +407,10 @@ public class clientFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         oldX = evt.getX();
         oldY = evt.getY();
+        
+        
     }//GEN-LAST:event_drawScreenMousePressed
-
+    
     private void drawScreenMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_drawScreenMouseDragged
         // TODO add your handling code here:
         currentX = evt.getX();
@@ -378,6 +419,9 @@ public class clientFrame extends javax.swing.JFrame {
         try{
             if(g != null && isDraw && startGame) {       
               g.fillOval(oldX, oldY, 10, 10);
+              
+              output.println(currentX + "," + currentY + "," + coordinate);
+              
               oldX = currentX;
               oldY = currentY;
           }  
@@ -387,10 +431,11 @@ public class clientFrame extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_drawScreenMouseDragged
+    
 
+    
     private void drawScreenPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_drawScreenPropertyChange
         // TODO add your handling code here:
-
     }//GEN-LAST:event_drawScreenPropertyChange
 
     private void formPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_formPropertyChange
@@ -453,6 +498,7 @@ public class clientFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ansWord;
     private javax.swing.JButton clearB;
     private javax.swing.JTextArea clientArea;
     private javax.swing.JScrollPane clientSP;
