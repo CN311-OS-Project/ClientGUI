@@ -37,6 +37,7 @@ public class clientFrame extends javax.swing.JFrame {
     private static final int SERVER_PORT = 9090;
     
     private ArrayList<String> users;
+    private ArrayList<Integer> numArr = new ArrayList<>();
     
     String username, typingText;
     PrintWriter output;
@@ -50,21 +51,12 @@ public class clientFrame extends javax.swing.JFrame {
     
     Timer T = new Timer(1000, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-                
-
-               
-               counters--;  
-               timeLebel.setText(""+counters);
-         
-               
+              counters--;  
+               timeLebel.setText(""+counters);          
                if(counters == -1 ) {
                    counters = 15;
                    timeLebel.setText(""+counters);
-
-               }   
-            
-            
-            
+               }
         }
     });
     public class ServerConnection implements Runnable {
@@ -89,20 +81,19 @@ public class clientFrame extends javax.swing.JFrame {
                     clientArea.append(temp1[0] + ": " + temp1[1] + "\n");
                 }
                 else if(temp1[lastIndex].equals(stateUser)) {                
-                    clientArea.append(temp1[0]+" has joined\n");                                     
-//                     if(users.size() > 1) {
-//                        clientArea.append("There is 2 People");
-//                        waitLebel.setVisible(false);
-//                        startGame = true;
-//                    }
-//                    if(users.get(0).equals(username) ) {
-//                        isDraw = true;
-//                    }
+                    clientArea.append(temp1[0]+" has joined\n");
            
                 }
                 
                 else if(temp1[lastIndex].equals(len)){
-                    clientArea.append("Online User: "+ temp1[0]);  
+                    int num = Integer.parseInt(temp1[0]);
+                    numArr.add(num);
+                                        
+                    if(num > 1) {
+                        startGame = true;
+                        waitLebel.setText("");
+                    }
+                    
                 }
                 
             }
@@ -146,10 +137,10 @@ public class clientFrame extends javax.swing.JFrame {
         clientType = new javax.swing.JTextField();
         sendB = new javax.swing.JButton();
         drawScreen = new javax.swing.JPanel();
+        waitLebel = new javax.swing.JLabel();
         redB = new javax.swing.JButton();
         clearB = new javax.swing.JButton();
         timeLebel = new javax.swing.JLabel();
-        waitLebel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addPropertyChangeListener(new java.beans.PropertyChangeListener() {
@@ -208,15 +199,24 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
 
+        waitLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        waitLebel.setText("Waitting For Player...");
+
         javax.swing.GroupLayout drawScreenLayout = new javax.swing.GroupLayout(drawScreen);
         drawScreen.setLayout(drawScreenLayout);
         drawScreenLayout.setHorizontalGroup(
             drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 857, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawScreenLayout.createSequentialGroup()
+                .addContainerGap(264, Short.MAX_VALUE)
+                .addComponent(waitLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(246, 246, 246))
         );
         drawScreenLayout.setVerticalGroup(
             drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 572, Short.MAX_VALUE)
+            .addGroup(drawScreenLayout.createSequentialGroup()
+                .addGap(247, 247, 247)
+                .addComponent(waitLebel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         redB.setText("Red");
@@ -235,9 +235,6 @@ public class clientFrame extends javax.swing.JFrame {
 
         timeLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         timeLebel.setText("15");
-
-        waitLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        waitLebel.setText("Waitting For Player...");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -264,14 +261,11 @@ public class clientFrame extends javax.swing.JFrame {
                                 .addComponent(clientSP, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(29, 29, 29)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(waitLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(enterUser)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(connectB))))))
+                                .addComponent(enterUser)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(connectB))))
                     .addComponent(timeLebel))
                 .addContainerGap())
         );
@@ -280,8 +274,7 @@ public class clientFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(waitLebel)
-                        .addGap(10, 10, 10)
+                        .addGap(54, 54, 54)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(enterUser)
