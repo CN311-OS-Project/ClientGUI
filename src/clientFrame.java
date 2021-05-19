@@ -28,7 +28,7 @@ import javax.swing.Timer;
  * @author acer
  */
 public class clientFrame extends javax.swing.JFrame {
-    private static String Chat = "Chat", Game = "Game", draw = "Draw", stateUser = "Username", len = "Array Length";
+    private static String Chat = "Chat", Game = "Game", draw = "Draw", stateUser = "Username", len = "Array Length", turn = "Player Turn";
     /**
      * Creates new form clientFrame
      */
@@ -37,7 +37,7 @@ public class clientFrame extends javax.swing.JFrame {
     private static final int SERVER_PORT = 9090;
     
     private ArrayList<String> users;
-    private ArrayList<Integer> numArr = new ArrayList<>();
+    private int usersOnline;
     
     String username, typingText;
     PrintWriter output;
@@ -86,15 +86,17 @@ public class clientFrame extends javax.swing.JFrame {
                 }
                 
                 else if(temp1[lastIndex].equals(len)){
-                    int num = Integer.parseInt(temp1[0]);
-                    numArr.add(num);
-                                        
-                    if(num > 1) {
-                        startGame = true;
-                        waitLebel.setText("");
-                    }
+                    usersOnline = Integer.parseInt(temp1[0]);
                     
+                } else if(temp1[lastIndex].equals(turn) && usersOnline > 1 ) {
+                    clientArea.append(temp1[0]+" turn");
+                    if (username.equals(temp1[0])){
+                        clientArea.append("is Draw\n");
+                    } else {
+                        clientArea.append("not Draw\n");
+                    }
                 }
+
                 
             }
         } catch (IOException e) {
@@ -109,6 +111,7 @@ public class clientFrame extends javax.swing.JFrame {
         
     }
 }
+
 
     public clientFrame() throws IOException{
         initComponents();
