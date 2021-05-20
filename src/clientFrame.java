@@ -11,10 +11,7 @@ import java.lang.reflect.Field;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.Scanner;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
@@ -64,7 +61,7 @@ public class clientFrame extends javax.swing.JFrame {
     Timer T = new Timer(1000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            counters--;  
+            counters--;
             timeLebel.setText(""+counters);
             if(isDraw) {
                 clientType.setEditable(false);
@@ -74,11 +71,13 @@ public class clientFrame extends javax.swing.JFrame {
             switch (counters) {
                 case -1:
                     drawScreen.repaint();
+                    g.setColor(Color.black);
                     clientArea.append("The answer word is '"+ansWord+"'\n");
                     counters = 20;
                     if(isDraw) {
-                        output.println("time out"+","+timeOut);  
+                        output.println("time out"+","+timeOut);
                     }
+         
                     timeLebel.setText(""+counters);
                     break;
                 case 15:
@@ -171,6 +170,10 @@ public class clientFrame extends javax.swing.JFrame {
                     clientArea.append("The answer word is '"+ansWord+"'\n");
                 }
                 
+                else if(temp1[lastIndex].equals(clearPaint)) {
+                    repaintDraw();                    
+                }
+                
 
                 
             }
@@ -249,7 +252,6 @@ public class clientFrame extends javax.swing.JFrame {
         clientType.setText("");
         g = drawScreen.getGraphics();
         clientType.setEditable(false);
-//        sendB.setEnabled(false);
 
     }
     
@@ -278,12 +280,12 @@ public class clientFrame extends javax.swing.JFrame {
         titleExit = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         clock = new javax.swing.JLabel();
-        ansLebel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         userField = new javax.swing.JTextField();
         connectB = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        ansLebel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         garbageB = new javax.swing.JLabel();
         blueB = new javax.swing.JButton();
@@ -320,11 +322,6 @@ public class clientFrame extends javax.swing.JFrame {
         drawScreen.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 drawScreenMousePressed(evt);
-            }
-        });
-        drawScreen.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                drawScreenPropertyChange(evt);
             }
         });
 
@@ -413,12 +410,6 @@ public class clientFrame extends javax.swing.JFrame {
         clock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon.png"))); // NOI18N
         getContentPane().add(clock, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
-        ansLebel.setFont(new java.awt.Font("Leelawadee", 0, 48)); // NOI18N
-        ansLebel.setForeground(new java.awt.Color(51, 51, 51));
-        ansLebel.setLabelFor(this);
-        ansLebel.setText("            ");
-        getContentPane().add(ansLebel, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 70, 350, -1));
-
         jPanel1.setBackground(new java.awt.Color(12, 52, 132));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -456,16 +447,23 @@ public class clientFrame extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(51, 51, 51));
         jLabel2.setText("Username");
 
+        ansLebel.setFont(new java.awt.Font("Leelawadee", 0, 40)); // NOI18N
+        ansLebel.setForeground(new java.awt.Color(51, 51, 51));
+        ansLebel.setLabelFor(this);
+        ansLebel.setText("            ");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(861, Short.MAX_VALUE)
+                .addContainerGap(316, Short.MAX_VALUE)
+                .addComponent(ansLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(187, 187, 187)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(connectB)
                 .addContainerGap())
         );
@@ -473,12 +471,15 @@ public class clientFrame extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
                         .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(connectB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(connectB, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(ansLebel)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 1250, 50));
@@ -762,10 +763,6 @@ public class clientFrame extends javax.swing.JFrame {
     
 
     
-    private void drawScreenPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_drawScreenPropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_drawScreenPropertyChange
-
     private void formPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_formPropertyChange
         // TODO add your handling code here:
         if(startGame) {
@@ -917,9 +914,17 @@ public class clientFrame extends javax.swing.JFrame {
 
     private void garbageBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_garbageBMouseClicked
         // TODO add your handling code here:
-        drawScreen.repaint();
+        if(isDraw) {
+          repaintDraw();
+          output.println("piant ja" +","+clearPaint);  
+        }
+        
+        
     }//GEN-LAST:event_garbageBMouseClicked
     
+    public void repaintDraw(){
+       drawScreen.repaint(); 
+    }
     
     
     private void sendData_chat() {
