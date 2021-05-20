@@ -140,9 +140,9 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace pref="584" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="545" max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="558" max="-2" attributes="0"/>
+                  <EmptySpace pref="563" max="32767" attributes="0"/>
                   <Component id="titleExit" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -181,7 +181,7 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="FC Lamoon" size="48" style="0"/>
+              <Font name="Tempus Sans ITC" size="45" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -266,7 +266,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace pref="856" max="32767" attributes="0"/>
+                  <EmptySpace pref="861" max="32767" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="userField" min="-2" pref="177" max="-2" attributes="0"/>
@@ -315,7 +315,7 @@
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Leelawadee" size="24" style="1"/>
+              <Font name="Tempus Sans ITC" size="24" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="33" green="33" red="33" type="rgb"/>
@@ -387,9 +387,9 @@
                           <Component id="cyanB" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="271" max="32767" attributes="0"/>
+                  <EmptySpace pref="267" max="32767" attributes="0"/>
                   <Component id="garbageB" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="clientType" min="-2" pref="387" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
