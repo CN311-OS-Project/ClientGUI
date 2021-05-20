@@ -50,14 +50,15 @@ public class clientFrame extends javax.swing.JFrame {
     
     int serverX = 0, serverY = 0;
     
-    int counters = 15;
+    int counters = 5;
     
     Timer T = new Timer(1000, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
               counters--;  
                timeLebel.setText(""+counters);          
                if(counters == -1 ) {
-                   counters = 15;
+                   drawScreen.repaint();
+                   counters = 5;
                    if(isDraw) {
                      output.println("time out"+","+timeOut);    
                    }                                 
@@ -95,7 +96,7 @@ public class clientFrame extends javax.swing.JFrame {
                     usersOnline = Integer.parseInt(temp1[0]);
                     
                 } else if(temp1[lastIndex].equals(turn) && usersOnline > 1 ) {
-                    clientArea.append(temp1[0]+" turn");
+                    clientArea.append(temp1[0]+" turn\n");
                     waitLebel.setText("");
                     ansWord.setText(temp1[1]);
                     startGame = true;
