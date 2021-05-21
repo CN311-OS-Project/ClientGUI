@@ -28,7 +28,8 @@ import javax.swing.Timer;
  */
 public class clientFrame extends javax.swing.JFrame {
     private static String Chat = "Chat", stateUser = "Username", len = "Array Length", turn = "Player Turn"
-            ,coordinate = "Send coordiante", timeOut = "Time Out", isWin = "Who Win", clearPaint = "Clear Painting";
+            ,coordinate = "Send coordiante", timeOut = "Time Out", isWin = "Who Win", clearPaint = "Clear Painting"
+            ,disconnect = "Disconnected";
     /**
      * Creates new form clientFrame
      */
