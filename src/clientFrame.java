@@ -28,7 +28,7 @@ import javax.swing.Timer;
  */
 public class clientFrame extends javax.swing.JFrame {
     private static String Chat = "Chat", stateUser = "Username", len = "Array Length", turn = "Player Turn"
-            ,coordinate = "Send coordiante", timeOut = "Time Out", isWin = "Who Win", clearPaint = "Clear Painting";
+            ,coordinate = "Send coordiante", timeOut = "Time Out", isWin = "Who Win", clearPaint = "Clear Painting", defaultColor = "black" , Exit = "Exit";
     /**
      * Creates new form clientFrame
      */
@@ -63,11 +63,6 @@ public class clientFrame extends javax.swing.JFrame {
         public void actionPerformed(ActionEvent e) {
             counters--;
             timeLebel.setText(""+counters);
-            if(isDraw) {
-                clientType.setEditable(false);
-            } else if(!isDraw) {
-                clientType.setEditable(true);
-            }
             switch (counters) {
                 case -1:
                     drawScreen.repaint();
@@ -135,6 +130,7 @@ public class clientFrame extends javax.swing.JFrame {
                     usersOnline = Integer.parseInt(temp1[0]);
                     
                 } else if(temp1[lastIndex].equals(turn) && usersOnline > 1 ) {
+                    repaintDraw();
                     ansWord = temp1[1];
                     counters = 20;
 
@@ -172,6 +168,14 @@ public class clientFrame extends javax.swing.JFrame {
                 
                 else if(temp1[lastIndex].equals(clearPaint)) {
                     repaintDraw();                    
+                }
+
+                else if(temp1[lastIndex].equals(defaultColor)) {
+                    paintColor = defaultColor;
+                }
+
+                else if(temp1[lastIndex].equals(Exit)) {
+                    clientArea.append(temp1[0] + "has Disconnected\n");
                 }
                 
 
@@ -801,6 +805,13 @@ public class clientFrame extends javax.swing.JFrame {
 
     private void titleExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_titleExitMouseClicked
         // TODO add your handling code here:
+        output.println(username + "," + Exit);
+        try {
+            socket.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         System.exit(0);
     }//GEN-LAST:event_titleExitMouseClicked
 
@@ -932,7 +943,7 @@ public class clientFrame extends javax.swing.JFrame {
             output.println(username + "," + typingText + "," + Chat);
             clientType.setText("");
             try{
-                if(typingText.equals(ansWord)){
+                if(typingText.equals(ansWord) && !(isDraw)){
                     
                     output.println(username+","+isWin);
                     output.println("time out"+","+timeOut); 
