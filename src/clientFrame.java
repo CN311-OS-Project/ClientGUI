@@ -44,14 +44,14 @@ public class clientFrame extends javax.swing.JFrame {
     private static String clueWord, ansWord;
     PrintWriter output;
     Socket socket;    
-    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false;
+    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false, disconnect = false;
     
     Graphics g;
     int currentX = 0, currentY= 0, oldX= 0, oldY= 0, counter;
     
     int serverX = 0, serverY = 0;
     
-    int counters = 20, oldRand;
+    int counters = 60, oldRand;
     Random rand;
     
     Font font;
@@ -67,15 +67,18 @@ public class clientFrame extends javax.swing.JFrame {
                 case -1:
                     drawScreen.repaint();
                     g.setColor(Color.black);
-                    clientArea.append("The answer word is '"+ansWord+"'\n");
-                    counters = 20;
+                    if(!disconnect) {
+                      clientArea.append("The answer word is '"+ansWord+"'\n");  
+                    }
+                    
+                    counters = 60;
                     if(isDraw) {
                         output.println("time out"+","+timeOut);
                     }
          
                     timeLebel.setText(""+counters);
                     break;
-                case 15:
+                case 40:
                     if(!isDraw) {
                         rand = new Random();
                         oldRand = rand.nextInt(ansLst.size()-1);
@@ -83,7 +86,7 @@ public class clientFrame extends javax.swing.JFrame {
                         ansLebel.setText(arrToString(cluLst));
                     }
                     break;
-                case 10:
+                case 15:
                     if(!isDraw) {  
                         rand = new Random();
                         int randNum = rand.nextInt(ansLst.size()-1);
@@ -132,7 +135,7 @@ public class clientFrame extends javax.swing.JFrame {
                 } else if(temp1[lastIndex].equals(turn) && usersOnline > 1 ) {
                     repaintDraw();
                     ansWord = temp1[1];
-                    counters = 20;
+                    counters = 60;
 
                     ansLst = splitString(ansWord);    
                     clueWord = repeat(ansWord.length(), "_");
@@ -162,8 +165,11 @@ public class clientFrame extends javax.swing.JFrame {
                 }
                 
                 else if(temp1[lastIndex].equals(isWin)) {
-                    clientArea.append(temp1[0] + temp1[1] +"\n");
-                    clientArea.append("The answer word is '"+ansWord+"'\n");
+                    if(!disconnect) {
+                      clientArea.append(temp1[0] + temp1[1] +"\n");
+                      clientArea.append("The answer word is '"+ansWord+"'\n");  
+                    }
+                    
                 }
                 
                 else if(temp1[lastIndex].equals(clearPaint)) {
@@ -175,6 +181,10 @@ public class clientFrame extends javax.swing.JFrame {
                 }
 
                 else if(temp1[lastIndex].equals(Exit)) {
+                    disconnect = true;
+                    timeLebel.setVisible(false);
+                    ansLebel.setVisible(false);
+                    waitLebel.setText("Waiting For Player...");
                     clientArea.append(temp1[0] + "has Disconnected\n");
                 }
                 
@@ -700,7 +710,6 @@ public class clientFrame extends javax.swing.JFrame {
             userField.setEditable(false);
             connectB.setEnabled(false);
             clientType.setEditable(true);
-//            sendB.setEnabled(true);
                      
             clientArea.append("My name " + username +"\n");
             new Thread(connection).start();
