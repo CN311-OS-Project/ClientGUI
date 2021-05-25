@@ -27,73 +27,75 @@ import javax.swing.Timer;
  * @author acer
  */
 public class clientFrame extends javax.swing.JFrame {
-    private static String Chat = "Chat", stateUser = "Username", len = "Array Length", turn = "Player Turn"
-            ,coordinate = "Send coordiante", timeOut = "Time Out", isWin = "Who Win", clearPaint = "Clear Painting", defaultColor = "black" , Exit = "Exit";
+    private static String Chat = "Chat", stateUser = "Username", len = "Array Length", turn = "Player Turn",
+            coordinate = "Send coordiante", timeOut = "Time Out", isWin = "Who Win", clearPaint = "Clear Painting",
+            defaultColor = "black", Exit = "Exit";
     /**
      * Creates new form clientFrame
      */
 
     private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 9090;
-    
+
     private ArrayList<String> users;
     private int usersOnline;
-    
+
     String username, typingText, paintColor, serverColor;
     private ArrayList<String> ansLst, cluLst;
     private static String clueWord, ansWord;
     PrintWriter output;
-    Socket socket;    
+    Socket socket;
     Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false, disconnect = false;
-    
+
     Graphics g;
-    int currentX = 0, currentY= 0, oldX= 0, oldY= 0, counter;
-    
+    int currentX = 0, currentY = 0, oldX = 0, oldY = 0, counter;
+
     int serverX = 0, serverY = 0;
-    
+
     int counters = 60, oldRand;
     Random rand;
-    
+
     Font font;
     Color color;
-    int xx,yy;
-    
+    int xx, yy;
+
+    /** Countdown Timer **/
     Timer T = new Timer(1000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             counters--;
-            timeLebel.setText(""+counters);
+            timeLebel.setText("" + counters);
             switch (counters) {
                 case -1:
                     drawScreen.repaint();
                     g.setColor(Color.black);
-                    if(!disconnect) {
-                      clientArea.append("The answer word is '"+ansWord+"'\n");  
+                    if (!disconnect) {
+                        clientArea.append("The answer word is '" + ansWord + "'\n");
                     }
-                    
+
                     counters = 60;
-                    if(isDraw) {
-                        output.println("time out"+","+timeOut);
+                    if (isDraw) {
+                        output.println("time out" + "," + timeOut);
                     }
-         
-                    timeLebel.setText(""+counters);
+
+                    timeLebel.setText("" + counters);
                     break;
                 case 40:
-                    if(!isDraw) {
+                    if (!isDraw) {
                         rand = new Random();
-                        oldRand = rand.nextInt(ansLst.size()-1);
-                        swap(ansLst,cluLst,oldRand);
+                        oldRand = rand.nextInt(ansLst.size() - 1);
+                        swap(ansLst, cluLst, oldRand);
                         ansLebel.setText(arrToString(cluLst));
                     }
                     break;
                 case 15:
-                    if(!isDraw) {  
+                    if (!isDraw) {
                         rand = new Random();
-                        int randNum = rand.nextInt(ansLst.size()-1);
-                        while(oldRand == randNum) {
-                            randNum = rand.nextInt(ansLst.size()-1);
+                        int randNum = rand.nextInt(ansLst.size() - 1);
+                        while (oldRand == randNum) {
+                            randNum = rand.nextInt(ansLst.size() - 1);
                         }
-                        swap(ansLst,cluLst,randNum);
+                        swap(ansLst, cluLst, randNum);
                         ansLebel.setText(arrToString(cluLst));
                     }
                     break;
@@ -102,108 +104,106 @@ public class clientFrame extends javax.swing.JFrame {
             }
         }
     });
+
+    /** Client use for connect to server **/
     public class ServerConnection implements Runnable {
-    private BufferedReader input;
-    private String serverResponse;
+        private BufferedReader input;
+        private String serverResponse;
 
-    public ServerConnection(Socket s) throws IOException {
-        socket = s;
-        input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        output = new PrintWriter(socket.getOutputStream(), true);
-    }
+        public ServerConnection(Socket s) throws IOException {
+            socket = s;
+            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            output = new PrintWriter(socket.getOutputStream(), true);
+        }
 
-    @Override
-    public void run() {
-        output.println(username +","+ stateUser);
-        try {
-            while ((serverResponse = input.readLine()) != null) {
-                String temp1[] = serverResponse.split(",");
-                int lastIndex = temp1.length - 1;
-                
-                if(temp1[lastIndex].equals(Chat)){
-                    clientArea.append(temp1[0] + ": " + temp1[1] + "\n");
-                }
-                else if(temp1[lastIndex].equals(stateUser)) {                
-                    clientArea.append(temp1[0]+" has joined\n");
-
-           
-                }
-                
-                else if(temp1[lastIndex].equals(len)){
-                    usersOnline = Integer.parseInt(temp1[0]);
-                    
-                } else if(temp1[lastIndex].equals(turn) && usersOnline > 1 ) {
-                    repaintDraw();
-                    ansWord = temp1[1];
-                    counters = 60;
-
-                    ansLst = splitString(ansWord);    
-                    clueWord = repeat(ansWord.length(), "_");
-                    cluLst = splitString(clueWord);
-                    
-                    clientArea.append(temp1[0]+" Turn To Draw\n");
-                    waitLebel.setText("");
-
-                    startGame = true;
-                    T.start();
-
-                    if (username.equals(temp1[0])){
-                        ansLebel.setText(ansWord);                   
-                        isDraw = true;                    
-                    } else {
-                        ansLebel.setText(arrToString(cluLst));   
-                        isDraw = false;
-                    }
-                }
-                
-                else if(temp1[lastIndex].equals(coordinate)) {
-                    serverX = Integer.parseInt(temp1[0]);
-                    serverY = Integer.parseInt(temp1[1]);
-                    serverColor = temp1[2];
-                    serverDraw(serverX,serverY,serverColor);
-
-                }
-                
-                else if(temp1[lastIndex].equals(isWin)) {
-                    if(!disconnect) {
-                      clientArea.append(temp1[0] + temp1[1] +"\n");
-                      clientArea.append("The answer word is '"+ansWord+"'\n");  
-                    }
-                    
-                }
-                
-                else if(temp1[lastIndex].equals(clearPaint)) {
-                    repaintDraw();                    
-                }
-
-                else if(temp1[lastIndex].equals(defaultColor)) {
-                    paintColor = defaultColor;
-                }
-
-                else if(temp1[lastIndex].equals(Exit)) {
-                    disconnect = true;
-                    timeLebel.setVisible(false);
-                    ansLebel.setVisible(false);
-                    waitLebel.setText("Waiting For Player...");
-                    clientArea.append(temp1[0] + "has Disconnected\n");
-                }
-                
-
-                
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        @Override
+        public void run() {
+            output.println(username + "," + stateUser);
             try {
-                input.close();
+                while ((serverResponse = input.readLine()) != null) {
+                    String temp1[] = serverResponse.split(",");
+                    int lastIndex = temp1.length - 1;
+
+                    if (temp1[lastIndex].equals(Chat)) {
+                        clientArea.append(temp1[0] + ": " + temp1[1] + "\n");
+                    } else if (temp1[lastIndex].equals(stateUser)) {
+                        clientArea.append(temp1[0] + " has joined\n");
+
+                    }
+
+                    else if (temp1[lastIndex].equals(len)) {
+                        usersOnline = Integer.parseInt(temp1[0]);
+
+                    } else if (temp1[lastIndex].equals(turn) && usersOnline > 1) {
+                        repaintDraw();
+                        ansWord = temp1[1];
+                        counters = 60;
+
+                        ansLst = splitString(ansWord);
+                        clueWord = repeat(ansWord.length(), "_");
+                        cluLst = splitString(clueWord);
+
+                        clientArea.append(temp1[0] + " Turn To Draw\n");
+                        waitLebel.setText("");
+
+                        startGame = true;
+                        T.start();
+
+                        if (username.equals(temp1[0])) {
+                            ansLebel.setText(ansWord);
+                            isDraw = true;
+                        } else {
+                            ansLebel.setText(arrToString(cluLst));
+                            isDraw = false;
+                        }
+                    }
+
+                    else if (temp1[lastIndex].equals(coordinate)) {
+                        serverX = Integer.parseInt(temp1[0]);
+                        serverY = Integer.parseInt(temp1[1]);
+                        serverColor = temp1[2];
+                        serverDraw(serverX, serverY, serverColor);
+
+                    }
+
+                    else if (temp1[lastIndex].equals(isWin)) {
+                        if (!disconnect) {
+                            clientArea.append(temp1[0] + temp1[1] + "\n");
+                            clientArea.append("The answer word is '" + ansWord + "'\n");
+                        }
+
+                    }
+
+                    else if (temp1[lastIndex].equals(clearPaint)) {
+                        repaintDraw();
+                    }
+
+                    else if (temp1[lastIndex].equals(defaultColor)) {
+                        paintColor = defaultColor;
+                    }
+
+                    else if (temp1[lastIndex].equals(Exit)) {
+                        disconnect = true;
+                        timeLebel.setVisible(false);
+                        ansLebel.setVisible(false);
+                        waitLebel.setText("Waiting For Player...");
+                        clientArea.append(temp1[0] + " has Disconnected\n");
+                    }
+
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        
+
         }
     }
-    
+
     /** Convert Array To String **/
     public static String arrToString(ArrayList<String> arr) {
         String tempString = "";
@@ -222,45 +222,47 @@ public class clientFrame extends javax.swing.JFrame {
         return arrLst;
 
     }
-    
+
+    /** Set string **/
     public static String repeat(int count, String with) {
         return new String(new char[count]).replace("\0", with);
     }
-    
-    
-    public static void swap(ArrayList<String> a,ArrayList<String> b, int num) {
+
+    /** Swap Index **/
+    public static void swap(ArrayList<String> a, ArrayList<String> b, int num) {
         String tempA = a.get(num);
         String tempB = b.get(num);
         a.remove(num);
         a.add(num, tempB);
         b.remove(num);
-        b.add(num, tempA);  
+        b.add(num, tempA);
     }
-    public void serverDraw(int serverX, int serverY,String serverColor) {
-        try{
-            if(!isDraw) {
-             try {
-                Field field = Color.class.getField(serverColor);
-                color = (Color)field.get(null);
-            } catch (Exception e) {
-                color = null; // Not defined
-            }       
-            g.setColor(color);
-            g.fillOval(serverX, serverY, 10, 10);
-            
+
+    /** Receive x,y from server to draw in drawScreen **/
+    public void serverDraw(int serverX, int serverY, String serverColor) {
+        try {
+            if (!isDraw) {
+                try {
+                    Field field = Color.class.getField(serverColor);
+                    color = (Color) field.get(null);
+                } catch (Exception e) {
+                    color = null; // Not defined
+                }
+                g.setColor(color);
+                g.fillOval(serverX, serverY, 10, 10);
+
             }
-            
-        } catch(Exception e) {
-            
+
+        } catch (Exception e) {
+
         }
     }
 
-
-    public clientFrame() throws IOException{
+    public clientFrame() throws IOException {
         initComponents();
 
         clientArea.setEditable(false);
-        setFont();     
+        setFont();
         isDraw = false;
         users = new ArrayList<>();
         clientType.setText("");
@@ -268,11 +270,10 @@ public class clientFrame extends javax.swing.JFrame {
         clientType.setEditable(false);
 
     }
-    
 
-    
+    /** Set Font In Chat **/
     public void setFont() {
-        font = new Font("Verdana",Font.BOLD,12);
+        font = new Font("Verdana", Font.BOLD, 12);
         clientArea.setFont(font);
     }
 
@@ -282,7 +283,8 @@ public class clientFrame extends javax.swing.JFrame {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         drawScreen = new javax.swing.JPanel();
@@ -344,20 +346,16 @@ public class clientFrame extends javax.swing.JFrame {
 
         javax.swing.GroupLayout drawScreenLayout = new javax.swing.GroupLayout(drawScreen);
         drawScreen.setLayout(drawScreenLayout);
-        drawScreenLayout.setHorizontalGroup(
-            drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawScreenLayout.createSequentialGroup()
-                .addContainerGap(253, Short.MAX_VALUE)
-                .addComponent(waitLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(203, 203, 203))
-        );
-        drawScreenLayout.setVerticalGroup(
-            drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawScreenLayout.createSequentialGroup()
-                .addContainerGap(264, Short.MAX_VALUE)
-                .addComponent(waitLebel)
-                .addGap(232, 232, 232))
-        );
+        drawScreenLayout.setHorizontalGroup(drawScreenLayout
+                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawScreenLayout.createSequentialGroup()
+                        .addContainerGap(253, Short.MAX_VALUE).addComponent(waitLebel,
+                                javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(203, 203, 203)));
+        drawScreenLayout
+                .setVerticalGroup(drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawScreenLayout.createSequentialGroup()
+                                .addContainerGap(264, Short.MAX_VALUE).addComponent(waitLebel).addGap(232, 232, 232)));
 
         getContentPane().add(drawScreen, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, 540));
 
@@ -401,23 +399,15 @@ public class clientFrame extends javax.swing.JFrame {
 
         javax.swing.GroupLayout titleBarLayout = new javax.swing.GroupLayout(titleBar);
         titleBar.setLayout(titleBarLayout);
-        titleBarLayout.setHorizontalGroup(
-            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titleBarLayout.createSequentialGroup()
-                .addGap(545, 545, 545)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 563, Short.MAX_VALUE)
-                .addComponent(titleExit)
-                .addContainerGap())
-        );
-        titleBarLayout.setVerticalGroup(
-            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titleBarLayout.createSequentialGroup()
-                .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(titleExit)
-                    .addComponent(jLabel1))
-                .addGap(3, 3, 3))
-        );
+        titleBarLayout.setHorizontalGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(titleBarLayout.createSequentialGroup().addGap(545, 545, 545).addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 563, Short.MAX_VALUE)
+                        .addComponent(titleExit).addContainerGap()));
+        titleBarLayout.setVerticalGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(titleBarLayout.createSequentialGroup()
+                        .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(titleExit).addComponent(jLabel1))
+                        .addGap(3, 3, 3)));
 
         getContentPane().add(titleBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1319, 50));
 
@@ -428,14 +418,10 @@ public class clientFrame extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1320, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 30, Short.MAX_VALUE)
-        );
+        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 1320, Short.MAX_VALUE));
+        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 30, Short.MAX_VALUE));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 750, 1320, 30));
 
@@ -468,33 +454,25 @@ public class clientFrame extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(316, Short.MAX_VALUE)
-                .addComponent(ansLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(187, 187, 187)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(connectB)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(connectB, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(ansLebel)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup().addContainerGap(316, Short.MAX_VALUE)
+                        .addComponent(ansLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 350,
+                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(187, 187, 187).addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 177,
+                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18).addComponent(connectB).addContainerGap()));
+        jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup().addContainerGap().addGroup(jPanel2Layout
+                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel2).addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(connectB, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createSequentialGroup().addComponent(ansLebel).addGap(0, 0, Short.MAX_VALUE)));
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 1250, 50));
 
@@ -614,74 +592,50 @@ public class clientFrame extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                        jPanel3Layout.createSequentialGroup().addContainerGap()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel3Layout.createSequentialGroup().addGroup(jPanel3Layout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(350, 350, 350)
+                                                        .addComponent(greenB))
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(400, 400, 400)
+                                                        .addComponent(magnetaB))
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(300, 300, 300)
+                                                        .addComponent(yellowB))
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(200, 200, 200)
+                                                        .addComponent(pinkB))
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(100, 100, 100)
+                                                        .addComponent(blackB))
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(50, 50, 50)
+                                                        .addComponent(dGB))
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(250, 250, 250)
+                                                        .addComponent(orangeB))
+                                                .addGroup(jPanel3Layout.createSequentialGroup().addGap(150, 150, 150)
+                                                        .addComponent(redB))
+                                                .addComponent(lightGrayB)).addGap(49, 49, 49).addComponent(blueB))
+                                        .addGroup(jPanel3Layout.createSequentialGroup().addGap(450, 450, 450)
+                                                .addComponent(cyanB)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 267,
+                                        Short.MAX_VALUE)
+                                .addComponent(garbageB).addGap(30, 30, 30)
+                                .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, 387,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()));
+        jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup().addComponent(garbageB).addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createSequentialGroup().addContainerGap()
+                        .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(350, 350, 350)
-                                .addComponent(greenB))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(400, 400, 400)
-                                .addComponent(magnetaB))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(300, 300, 300)
-                                .addComponent(yellowB))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(200, 200, 200)
-                                .addComponent(pinkB))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(100, 100, 100)
-                                .addComponent(blackB))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(50, 50, 50)
-                                .addComponent(dGB))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(250, 250, 250)
-                                .addComponent(orangeB))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(150, 150, 150)
-                                .addComponent(redB))
-                            .addComponent(lightGrayB))
-                        .addGap(49, 49, 49)
-                        .addComponent(blueB))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(450, 450, 450)
-                        .addComponent(cyanB)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 267, Short.MAX_VALUE)
-                .addComponent(garbageB)
-                .addGap(30, 30, 30)
-                .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(garbageB)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(greenB)
-                    .addComponent(magnetaB)
-                    .addComponent(yellowB)
-                    .addComponent(pinkB)
-                    .addComponent(blackB)
-                    .addComponent(dGB)
-                    .addComponent(orangeB)
-                    .addComponent(redB)
-                    .addComponent(lightGrayB)
-                    .addComponent(blueB)
-                    .addComponent(cyanB))
-                .addContainerGap())
-        );
+                                .addComponent(greenB).addComponent(magnetaB).addComponent(yellowB).addComponent(pinkB)
+                                .addComponent(blackB).addComponent(dGB).addComponent(orangeB).addComponent(redB)
+                                .addComponent(lightGrayB).addComponent(blueB).addComponent(cyanB))
+                        .addContainerGap()));
 
         getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 690, 1280, 40));
 
@@ -692,127 +646,119 @@ public class clientFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userFieldActionPerformed
+    private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_userFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_userFieldActionPerformed
-    
+    }// GEN-LAST:event_userFieldActionPerformed
+
     // Connect to server
-    private void connectBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectBActionPerformed
+    private void connectBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_connectBActionPerformed
         // TODO add your handling code here:
         clientArea.append("Connecting to server..\n");
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             output = new PrintWriter(socket.getOutputStream(), true);
             ServerConnection connection = new ServerConnection(socket);
-                
+
             username = userField.getText();
-                                   
+
             userField.setEditable(false);
             connectB.setEnabled(false);
             clientType.setEditable(true);
-                     
-            clientArea.append("My name " + username +"\n");
+
+            clientArea.append("My name " + username + "\n");
             new Thread(connection).start();
 
         } catch (IOException ex) {
             Logger.getLogger(clientFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-       
-    }//GEN-LAST:event_connectBActionPerformed
-    
-    private void clientTypeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_clientTypeKeyPressed
+    }
+
+    private void clientTypeKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_clientTypeKeyPressed
         // TODO add your handling code here:
-        if(clientType.getText() != "") {
-            if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+        if (clientType.getText() != "") {
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 sendData_chat();
 
             }
-            
-        }
-    }//GEN-LAST:event_clientTypeKeyPressed
 
-    private void redBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redBActionPerformed
+        }
+    }
+
+    private void redBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_redBActionPerformed
         // TODO add your handling code here:
         paintColor = "red";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_redBActionPerformed
+    } 
 
-    private void drawScreenMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_drawScreenMousePressed
+    private void drawScreenMousePressed(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_drawScreenMousePressed
         // TODO add your handling code here:
         oldX = evt.getX();
         oldY = evt.getY();
-        
-        
-    }//GEN-LAST:event_drawScreenMousePressed
-    
-    private void drawScreenMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_drawScreenMouseDragged
+
+    }
+
+    private void drawScreenMouseDragged(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_drawScreenMouseDragged
         // TODO add your handling code here:
         currentX = evt.getX();
         currentY = evt.getY();
-        
-        try{
-            if(g != null && isDraw && startGame) {       
-              g.fillOval(oldX, oldY, 10, 10);
-              
-              output.println(currentX + "," + currentY + ","+ paintColor + "," + coordinate);
-              
-              oldX = currentX;
-              oldY = currentY;
-              
-          }  
-        }
-        catch(Exception e) {
-            
-        }
-        
-    }//GEN-LAST:event_drawScreenMouseDragged
-    
 
-    
-    private void formPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_formPropertyChange
+        try {
+            if (g != null && isDraw && startGame) {
+                g.fillOval(oldX, oldY, 10, 10);
+
+                output.println(currentX + "," + currentY + "," + paintColor + "," + coordinate);
+
+                oldX = currentX;
+                oldY = currentY;
+
+            }
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    private void formPropertyChange(java.beans.PropertyChangeEvent evt) {// GEN-FIRST:event_formPropertyChange
         // TODO add your handling code here:
-        if(startGame) {
-           T.start(); 
+        if (startGame) {
+            T.start();
         }
-        
-        
-        
-    }//GEN-LAST:event_formPropertyChange
+    }
 
-    private void blueBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blueBActionPerformed
+    private void blueBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_blueBActionPerformed
         // TODO add your handling code here:
         paintColor = "blue";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_blueBActionPerformed
+    }
 
-    private void titleBarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_titleBarMousePressed
+    private void titleBarMousePressed(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_titleBarMousePressed
         // TODO add your handling code here:
         xx = evt.getX();
         yy = evt.getY();
-    }//GEN-LAST:event_titleBarMousePressed
+    }
 
-    private void titleBarMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_titleBarMouseDragged
+    private void titleBarMouseDragged(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_titleBarMouseDragged
 
         // Drag Window Program
         int x = evt.getXOnScreen();
         int y = evt.getYOnScreen();
-        this.setLocation(x-xx,y-yy);
-    }//GEN-LAST:event_titleBarMouseDragged
+        this.setLocation(x - xx, y - yy);
+    }
 
-    private void titleExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_titleExitMouseClicked
+    private void titleExitMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_titleExitMouseClicked
         // TODO add your handling code here:
         output.println(username + "," + Exit);
         try {
@@ -822,155 +768,158 @@ public class clientFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
         System.exit(0);
-    }//GEN-LAST:event_titleExitMouseClicked
+    }
 
-    private void lightGrayBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lightGrayBActionPerformed
+    private void lightGrayBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_lightGrayBActionPerformed
         // TODO add your handling code here:
         paintColor = "gray";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_lightGrayBActionPerformed
+    }
 
-    private void blackBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blackBActionPerformed
+    private void blackBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_blackBActionPerformed
         // TODO add your handling code here:
         paintColor = "black";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_blackBActionPerformed
+    }
 
-    private void pinkBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pinkBActionPerformed
+    private void pinkBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pinkBActionPerformed
         // TODO add your handling code here:
         paintColor = "pink";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_pinkBActionPerformed
+    }
 
-    private void orangeBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orangeBActionPerformed
+    private void orangeBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_orangeBActionPerformed
         // TODO add your handling code here:
         paintColor = "orange";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_orangeBActionPerformed
+    }
 
-    private void yellowBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yellowBActionPerformed
+    private void yellowBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_yellowBActionPerformed
         // TODO add your handling code here:
         paintColor = "yellow";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_yellowBActionPerformed
+    }
 
-    private void greenBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_greenBActionPerformed
+    private void greenBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_greenBActionPerformed
         // TODO add your handling code here:
         paintColor = "green";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_greenBActionPerformed
+    }
 
-    private void magnetaBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_magnetaBActionPerformed
+    private void magnetaBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_magnetaBActionPerformed
         // TODO add your handling code here:
         paintColor = "magenta";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_magnetaBActionPerformed
+    }
 
-    private void cyanBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cyanBActionPerformed
+    private void cyanBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cyanBActionPerformed
         // TODO add your handling code here:
         paintColor = "cyan";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
+        }
         g.setColor(color);
-    }//GEN-LAST:event_cyanBActionPerformed
+    }
 
-    private void dGBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dGBActionPerformed
+    private void dGBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_dGBActionPerformed
         // TODO add your handling code here:
         paintColor = "darkGray";
         try {
             Field field = Color.class.getField(paintColor);
-            color = (Color)field.get(null);
+            color = (Color) field.get(null);
         } catch (Exception e) {
             color = null; // Not defined
-        }       
-        g.setColor(color);
-    }//GEN-LAST:event_dGBActionPerformed
-
-    private void garbageBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_garbageBMouseClicked
-        // TODO add your handling code here:
-        if(isDraw) {
-          repaintDraw();
-          output.println("piant ja" +","+clearPaint);  
         }
-        
-        
-    }//GEN-LAST:event_garbageBMouseClicked
-    
-    public void repaintDraw(){
-       drawScreen.repaint(); 
+        g.setColor(color);
     }
-    
-    
+
+    private void garbageBMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_garbageBMouseClicked
+        // TODO add your handling code here:
+        if (isDraw) {
+            repaintDraw();
+            output.println("piant ja" + "," + clearPaint);
+        }
+
+    }
+
+    /** Clear all Paint **/
+    public void repaintDraw() {
+        drawScreen.repaint();
+    }
+
+    /** Receive x,y from server to draw in drawScreen **/
     private void sendData_chat() {
-            typingText = clientType.getText();
-            output.println(username + "," + typingText + "," + Chat);
-            clientType.setText("");
-            try{
-                if(typingText.equals(ansWord) && !(isDraw)){
-                    
-                    output.println(username+","+isWin);
-                    output.println("time out"+","+timeOut); 
-                }               
-            }catch(Exception e) {
-                
+        typingText = clientType.getText();
+        output.println(username + "," + typingText + "," + Chat);
+        clientType.setText("");
+        try {
+            if (typingText.equals(ansWord) && !(isDraw)) {
+
+                output.println(username + "," + isWin);
+                output.println("time out" + "," + timeOut);
             }
-            clientType.requestFocus();
+        } catch (Exception e) {
+
+        }
+        clientType.requestFocus();
     }
-    
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+        // <editor-fold defaultstate="collapsed" desc=" Look and feel setting code
+        // (optional) ">
+        /*
+         * If Nimbus (introduced in Java SE 6) is not available, stay with the default
+         * look and feel. For details see
+         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -980,15 +929,19 @@ public class clientFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
+                    ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
+                    ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
+                    ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(clientFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
+                    ex);
         }
-        //</editor-fold>
+        // </editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
