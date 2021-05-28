@@ -133,9 +133,12 @@ public class clientFrame extends javax.swing.JFrame {
 
                     else if (temp1[lastIndex].equals(len)) {
                         usersOnline = Integer.parseInt(temp1[0]);
+                        onlineLebel.setText(temp1[0]);
 
                     } else if (temp1[lastIndex].equals(turn) && usersOnline > 1) {
                         repaintDraw();
+                        
+                        turnLebel.setText(temp1[0] + "'s Turn");
                         ansWord = temp1[1];
                         counters = 60;
 
@@ -287,6 +290,14 @@ public class clientFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollBar1 = new javax.swing.JScrollBar();
+        jScrollBar2 = new javax.swing.JScrollBar();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jPanel4 = new javax.swing.JPanel();
+        turnLebel = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        onlineLebel = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         drawScreen = new javax.swing.JPanel();
         waitLebel = new javax.swing.JLabel();
         timeLebel = new javax.swing.JLabel();
@@ -297,12 +308,12 @@ public class clientFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         clock = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         userField = new javax.swing.JTextField();
         connectB = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         ansLebel = new javax.swing.JLabel();
-        disconnectB = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         garbageB = new javax.swing.JLabel();
         blueB = new javax.swing.JButton();
@@ -319,6 +330,8 @@ public class clientFrame extends javax.swing.JFrame {
         clientType = new javax.swing.JTextField();
         bg = new javax.swing.JLabel();
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
         setUndecorated(true);
@@ -329,6 +342,42 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel4.setBackground(new java.awt.Color(102, 153, 255));
+
+        turnLebel.setFont(new java.awt.Font("Tempus Sans ITC", 1, 24)); // NOI18N
+        turnLebel.setForeground(new java.awt.Color(51, 51, 51));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addComponent(turnLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(64, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(0, 11, Short.MAX_VALUE)
+                .addComponent(turnLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 150, 280, 40));
+
+        jPanel5.setBackground(new java.awt.Color(254, 220, 86));
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        onlineLebel.setFont(new java.awt.Font("Tempus Sans ITC", 0, 30)); // NOI18N
+        onlineLebel.setText("0");
+        jPanel5.add(onlineLebel, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 0, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Tempus Sans ITC", 1, 24)); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/greenbutt.png"))); // NOI18N
+        jPanel5.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(1210, 150, 90, 40));
 
         drawScreen.setBackground(new java.awt.Color(255, 255, 255));
         drawScreen.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -349,8 +398,8 @@ public class clientFrame extends javax.swing.JFrame {
         drawScreen.setLayout(drawScreenLayout);
         drawScreenLayout.setHorizontalGroup(
             drawScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawScreenLayout.createSequentialGroup()
-                .addContainerGap(236, Short.MAX_VALUE)
+            .addGroup(drawScreenLayout.createSequentialGroup()
+                .addContainerGap(286, Short.MAX_VALUE)
                 .addComponent(waitLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(203, 203, 203))
         );
@@ -362,7 +411,7 @@ public class clientFrame extends javax.swing.JFrame {
                 .addGap(232, 232, 232))
         );
 
-        getContentPane().add(drawScreen, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 840, 540));
+        getContentPane().add(drawScreen, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 890, 540));
 
         timeLebel.setFont(new java.awt.Font("Kristen ITC", 0, 28)); // NOI18N
         timeLebel.setText("     ");
@@ -373,7 +422,7 @@ public class clientFrame extends javax.swing.JFrame {
         clientArea.setRows(5);
         jScrollPane2.setViewportView(clientArea);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(869, 137, 430, 540));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(929, 207, 370, 470));
 
         titleBar.setBackground(new java.awt.Color(12, 52, 132));
         titleBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -388,7 +437,7 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
 
-        titleExit.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        titleExit.setFont(new java.awt.Font("Tahoma", 1, 40)); // NOI18N
         titleExit.setForeground(new java.awt.Color(255, 102, 102));
         titleExit.setText("X");
         titleExit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -407,9 +456,9 @@ public class clientFrame extends javax.swing.JFrame {
         titleBarLayout.setHorizontalGroup(
             titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(titleBarLayout.createSequentialGroup()
-                .addGap(545, 545, 545)
+                .addGap(546, 546, 546)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 563, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 560, Short.MAX_VALUE)
                 .addComponent(titleExit)
                 .addContainerGap())
         );
@@ -419,28 +468,23 @@ public class clientFrame extends javax.swing.JFrame {
                 .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(titleExit)
                     .addComponent(jLabel1))
-                .addGap(3, 3, 3))
+                .addGap(11, 11, 11))
         );
 
-        getContentPane().add(titleBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1319, 50));
+        getContentPane().add(titleBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1319, 60));
 
         clock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon.png"))); // NOI18N
         getContentPane().add(clock, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
         jPanel1.setBackground(new java.awt.Color(12, 52, 132));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1320, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 30, Short.MAX_VALUE)
-        );
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Originality by Mansea & Wonyus");
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 750, 1320, 30));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 750, 1320, 40));
 
         jPanel2.setBackground(new java.awt.Color(102, 153, 255));
         jPanel2.setForeground(new java.awt.Color(51, 153, 255));
@@ -469,13 +513,6 @@ public class clientFrame extends javax.swing.JFrame {
         ansLebel.setLabelFor(this);
         ansLebel.setText("            ");
 
-        disconnectB.setText("Disconnect");
-        disconnectB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disconnectBActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -483,14 +520,12 @@ public class clientFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(288, Short.MAX_VALUE)
                 .addComponent(ansLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(187, 187, 187)
+                .addGap(241, 241, 241)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(connectB, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(disconnectB)
+                .addComponent(connectB, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -500,12 +535,11 @@ public class clientFrame extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(connectB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
                         .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(disconnectB, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(connectB, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -664,10 +698,10 @@ public class clientFrame extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(450, 450, 450)
                         .addComponent(cyanB)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 255, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 307, Short.MAX_VALUE)
                 .addComponent(garbageB)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -705,10 +739,6 @@ public class clientFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void disconnectBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectBActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_disconnectBActionPerformed
-
     private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_userFieldActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_userFieldActionPerformed
@@ -716,7 +746,7 @@ public class clientFrame extends javax.swing.JFrame {
     // Connect to server
     private void connectBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_connectBActionPerformed
         // TODO add your handling code here:
-        clientArea.append("Connecting to server..\n");
+        clientArea.append("Connecting to server...\n");
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             output = new PrintWriter(socket.getOutputStream(), true);
@@ -732,7 +762,8 @@ public class clientFrame extends javax.swing.JFrame {
             new Thread(connection).start();
 
         } catch (IOException ex) {
-            Logger.getLogger(clientFrame.class.getName()).log(Level.SEVERE, null, ex);
+            clientArea.append("Server is not responding...\n");
+            
         }
 
     }
@@ -823,13 +854,17 @@ public class clientFrame extends javax.swing.JFrame {
 
     private void titleExitMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_titleExitMouseClicked
         // TODO add your handling code here:
-        output.println(username + "," + Exit);
-        try {
-            socket.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        
+        if(startGame) {
+            try {
+                output.println(username + "," + Exit);
+                socket.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }  
         }
+
         System.exit(0);
     }
 
@@ -1030,24 +1065,32 @@ public class clientFrame extends javax.swing.JFrame {
     private javax.swing.JButton connectB;
     private javax.swing.JButton cyanB;
     private javax.swing.JButton dGB;
-    private javax.swing.JButton disconnectB;
     private javax.swing.JPanel drawScreen;
     private javax.swing.JLabel garbageB;
     private javax.swing.JButton greenB;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollBar jScrollBar1;
+    private javax.swing.JScrollBar jScrollBar2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton lightGrayB;
     private javax.swing.JButton magnetaB;
+    private javax.swing.JLabel onlineLebel;
     private javax.swing.JButton orangeB;
     private javax.swing.JButton pinkB;
     private javax.swing.JButton redB;
     private javax.swing.JLabel timeLebel;
     private javax.swing.JPanel titleBar;
     private javax.swing.JLabel titleExit;
+    private javax.swing.JLabel turnLebel;
     private javax.swing.JTextField userField;
     private javax.swing.JLabel waitLebel;
     private javax.swing.JButton yellowB;
