@@ -118,6 +118,7 @@ public class clientFrame extends javax.swing.JFrame {
 
         @Override
         public void run() {
+
             output.println(username + "," + stateUser);
             try {
                 while ((serverResponse = input.readLine()) != null) {
@@ -126,7 +127,9 @@ public class clientFrame extends javax.swing.JFrame {
 
                     if (temp1[lastIndex].equals(Chat)) {
                         clientArea.append(temp1[0] + ": " + temp1[1] + "\n");
-                    } else if (temp1[lastIndex].equals(stateUser)) {
+                    } 
+                    
+                    else if (temp1[lastIndex].equals(stateUser)) {
                         clientArea.append(temp1[0] + " has joined\n");
 
                     }
@@ -135,9 +138,10 @@ public class clientFrame extends javax.swing.JFrame {
                         usersOnline = Integer.parseInt(temp1[0]);
                         onlineLebel.setText(temp1[0]);
 
-                    } else if (temp1[lastIndex].equals(turn) && usersOnline > 1) {
+                    } 
+                    
+                    else if (temp1[lastIndex].equals(turn) && usersOnline >= 2 ) {
                         repaintDraw();
-                        
                         turnLebel.setText(temp1[0] + "'s Turn");
                         ansWord = temp1[1];
                         counters = 60;
@@ -187,10 +191,7 @@ public class clientFrame extends javax.swing.JFrame {
 
                     else if (temp1[lastIndex].equals(Exit)) {
                         disconnect = true;
-                        timeLebel.setVisible(false);
-                        ansLebel.setVisible(false);
-                        waitLebel.setText("Waiting For Player...");
-                        clientArea.append(temp1[0] + " has Disconnected\n");
+                        clientArea.append(temp1[0] + " has left\n");
                     }
 
                 }
@@ -858,14 +859,21 @@ public class clientFrame extends javax.swing.JFrame {
         if(startGame) {
             try {
                 output.println(username + "," + Exit);
+                output.close();
                 socket.close();
+                System.exit(0);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }  
+        }else if (isConnected){
+            output.println(username + "," + Exit);
+            System.exit(0);
+        }else{
+            System.exit(0);
         }
 
-        System.exit(0);
+        
     }
 
     private void lightGrayBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_lightGrayBActionPerformed
