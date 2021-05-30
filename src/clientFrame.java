@@ -35,7 +35,7 @@ public class clientFrame extends javax.swing.JFrame {
      * Creates new form clientFrame
      */
 
-    private static final String SERVER_IP = "127.0.0.1";
+    private static final String SERVER_IP = "25.36.242.174";
     private static final int SERVER_PORT = 9090;
 
     private ArrayList<String> users;
