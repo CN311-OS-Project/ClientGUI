@@ -45,7 +45,7 @@ public class clientFrame extends javax.swing.JFrame {
     private static String clueWord, ansWord;
     PrintWriter output;
     Socket socket;
-    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false, disconnect = false;
+    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false, disconnect = false, spectetor = false;
 
     Graphics g;
     int currentX = 0, currentY = 0, oldX = 0, oldY = 0, counter;
@@ -60,17 +60,17 @@ public class clientFrame extends javax.swing.JFrame {
     int xx, yy;
 
     /** Countdown Timer **/
-    Timer T = new Timer(1000, new ActionListener() {
+    Timer T = new Timer(1001, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             counters--;
             timeLebel.setText("" + counters);
             switch (counters) {
                 case -1:
+                    counters = 60;
                     drawScreen.repaint();
                     g.setColor(Color.black);
-
-                    counters = 60;
+                   
                     if (isConnected && ansWord != null) {
                         clientArea.append("The answer word is '" + ansWord + "'\n");
                     }
@@ -137,19 +137,21 @@ public class clientFrame extends javax.swing.JFrame {
                         usersOnline = Integer.parseInt(temp1[0]);
                         onlineLebel.setText(temp1[0]);
 
-                        if (usersOnline == 1 ){
-                            waitLebel.setText("Waiting For new player...");
-                        }else if (ansWord == null && usersOnline > 2) {
-                            waitLebel.setText("Waiting For new turn");
+                        if (ansWord == null && usersOnline > 2) {
+                            waitLebel.setText("Waiting For The Next Turn..");
+                            spectetor = true;
                         }
 
                     }
 
                     else if (temp1[lastIndex].equals(turn) && usersOnline >= 2) {
+                        counters = 60;
+                        if(spectetor) {
+                            spectetor = false;
+                        }
                         repaintDraw();
                         turnLebel.setText(temp1[0] + "'s Turn");
                         ansWord = temp1[1];
-                        counters = 60;
 
                         ansLst = splitString(ansWord);
                         clueWord = repeat(ansWord.length(), "_");
@@ -160,6 +162,7 @@ public class clientFrame extends javax.swing.JFrame {
                         waitLebel.setText("");
 
                         startGame = true;
+                        
                         T.start();
 
                         if (username.equals(temp1[0])) {
@@ -175,7 +178,10 @@ public class clientFrame extends javax.swing.JFrame {
                         serverX = Integer.parseInt(temp1[0]);
                         serverY = Integer.parseInt(temp1[1]);
                         serverColor = temp1[2];
-                        serverDraw(serverX, serverY, serverColor);
+                        
+                        if(!spectetor) {
+                          serverDraw(serverX, serverY, serverColor);  
+                        }                        
 
                     }
 
@@ -722,6 +728,7 @@ public class clientFrame extends javax.swing.JFrame {
             clientType.setEditable(true);
 
             clientArea.append("My name " + username + "\n");
+                      
             new Thread(connection).start();
 
         } catch (IOException ex) {
