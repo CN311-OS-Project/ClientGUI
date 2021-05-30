@@ -26,6 +26,7 @@ import javax.swing.Timer;
  *
  * @author acer
  */
+// Mansea
 public class clientFrame extends javax.swing.JFrame {
     private static String Chat = "Chat", stateUser = "Username", len = "Array Length", turn = "Player Turn",
             coordinate = "Send coordiante", timeOut = "Time Out", isWin = "Who Win", clearPaint = "Clear Painting",
