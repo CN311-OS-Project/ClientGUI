@@ -210,12 +210,12 @@ public class clientFrame extends javax.swing.JFrame {
 
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             } finally {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
 
@@ -884,7 +884,7 @@ public class clientFrame extends javax.swing.JFrame {
                 System.exit(0);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         } else if (isConnected) {
             output.println(username + "," + Exit);
