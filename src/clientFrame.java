@@ -346,6 +346,7 @@ public class clientFrame extends javax.swing.JFrame {
         dGB = new javax.swing.JButton();
         lightGrayB = new javax.swing.JButton();
         clientType = new javax.swing.JTextField();
+        eraserB = new javax.swing.JLabel();
         bg = new javax.swing.JLabel();
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -388,8 +389,8 @@ public class clientFrame extends javax.swing.JFrame {
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         onlineLebel.setFont(new java.awt.Font("Tempus Sans ITC", 0, 30)); // NOI18N
-        onlineLebel.setText("0");
-        jPanel5.add(onlineLebel, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 0, -1, -1));
+        onlineLebel.setText(" ");
+        jPanel5.add(onlineLebel, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 0, 20, -1));
 
         jLabel3.setFont(new java.awt.Font("Tempus Sans ITC", 1, 24)); // NOI18N
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/greenbutt.png"))); // NOI18N
@@ -410,7 +411,7 @@ public class clientFrame extends javax.swing.JFrame {
         });
 
         waitLebel.setFont(new java.awt.Font("Leelawadee", 0, 36)); // NOI18N
-        waitLebel.setText("Waiting For Player...");
+        waitLebel.setText("Waiting For Connect...");
 
         javax.swing.GroupLayout drawScreenLayout = new javax.swing.GroupLayout(drawScreen);
         drawScreen.setLayout(drawScreenLayout);
@@ -677,6 +678,14 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
 
+        eraserB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eraser.png"))); // NOI18N
+        eraserB.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        eraserB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                eraserBMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -716,7 +725,9 @@ public class clientFrame extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(450, 450, 450)
                         .addComponent(cyanB)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 307, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(eraserB)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(garbageB)
                 .addGap(18, 18, 18)
                 .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -724,9 +735,6 @@ public class clientFrame extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(garbageB)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(clientType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -746,6 +754,11 @@ public class clientFrame extends javax.swing.JFrame {
                     .addComponent(blueB)
                     .addComponent(cyanB))
                 .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(garbageB)
+                    .addComponent(eraserB))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 690, 1280, 40));
@@ -756,6 +769,18 @@ public class clientFrame extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void eraserBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eraserBMouseClicked
+        // TODO add your handling code here:
+        paintColor = "white";
+        try {
+            Field field = Color.class.getField(paintColor);
+            color = (Color) field.get(null);
+        } catch (Exception e) {
+            color = null; // Not defined
+        }
+        g.setColor(color);
+    }//GEN-LAST:event_eraserBMouseClicked
 
     private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_userFieldActionPerformed
         // TODO add your handling code here:
@@ -775,6 +800,7 @@ public class clientFrame extends javax.swing.JFrame {
             userField.setEditable(false);
             connectB.setEnabled(false);
             clientType.setEditable(true);
+            waitLebel.setText("Waiting For Player...");
 
             clientArea.append("My name " + username + "\n");
                       
@@ -1094,6 +1120,7 @@ public class clientFrame extends javax.swing.JFrame {
     private javax.swing.JButton cyanB;
     private javax.swing.JButton dGB;
     private javax.swing.JPanel drawScreen;
+    private javax.swing.JLabel eraserB;
     private javax.swing.JLabel garbageB;
     private javax.swing.JButton greenB;
     private javax.swing.JComboBox<String> jComboBox1;
