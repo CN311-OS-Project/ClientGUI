@@ -279,9 +279,10 @@ public class clientFrame extends javax.swing.JFrame {
 
     public clientFrame() throws IOException {
         initComponents();
-
+        setIcon();
+        
         clientArea.setEditable(false);
-        setFont();
+        setFont();       
         isDraw = false;
         users = new ArrayList<>();
         clientType.setText("");
@@ -289,6 +290,11 @@ public class clientFrame extends javax.swing.JFrame {
 
         clientType.setEditable(false);
 
+    }
+    
+    /** Set Icon **/
+    public void setIcon() {
+        setIconImage(Toolkit.getDefaultToolkit().getImage((getClass().getResource("icon3.png"))));
     }
 
     /** Set Font In Chat **/
@@ -867,16 +873,13 @@ public class clientFrame extends javax.swing.JFrame {
             output = new PrintWriter(socket.getOutputStream(), true);
             ServerConnection connection = new ServerConnection(socket);
 
-            username = userField.getText();
-            
+            username = userField.getText();            
             ipField.setEditable(false);
             userField.setEditable(false);
             connectB.setEnabled(false);
             clientType.setEditable(true);
             waitLebel.setText("Waiting For Player...");
-
-            clientArea.append("My name " + username + "\n");
-                      
+            clientArea.append("My name " + username + "\n");                     
             new Thread(connection).start();
 
         } catch (IOException ex) {
