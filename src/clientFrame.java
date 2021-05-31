@@ -46,7 +46,8 @@ public class clientFrame extends javax.swing.JFrame {
     private static String clueWord, ansWord;
     PrintWriter output;
     Socket socket;
-    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false, disconnect = false, spectetor = false;
+    Boolean isConnected = false, isIt, isDraw = true, isWaitPlayer = true, startGame = false, 
+            disconnect = false, spectetor = false;
 
     Graphics g;
     int currentX = 0, currentY = 0, oldX = 0, oldY = 0, counter;
@@ -66,19 +67,26 @@ public class clientFrame extends javax.swing.JFrame {
         public void actionPerformed(ActionEvent e) {
             counters--;
             timeLebel.setText("" + counters);
+            if(usersOnline < 2) {
+                isWaitPlayer = true;
+                timeLebel.setText("");
+                ansLebel.setText("");
+                waitLebel.setText("Waiting For Player...");
+            }
             switch (counters) {
                 case -1:
                     counters = 60;
                     drawScreen.repaint();
                     g.setColor(Color.black);
-                   
+                    
+
+                    
                     if (isConnected && !spectetor) {
                         clientArea.append("The answer word is '" + ansWord + "'\n");
                     }
                     if (isDraw) {
                         output.println("time out" + "," + timeOut);
                     }
-
                     timeLebel.setText("" + counters);
                     break;
                 case 40:
@@ -211,12 +219,12 @@ public class clientFrame extends javax.swing.JFrame {
 
                 }
             } catch (IOException e) {
-//                e.printStackTrace();
+
             } finally {
                 try {
                     input.close();
                 } catch (IOException e) {
-//                    e.printStackTrace();
+
                 }
             }
 
@@ -287,7 +295,6 @@ public class clientFrame extends javax.swing.JFrame {
         users = new ArrayList<>();
         clientType.setText("");
         g = drawScreen.getGraphics();
-
         clientType.setEditable(false);
 
     }
