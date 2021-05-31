@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
@@ -195,7 +196,7 @@ public class clientFrame extends javax.swing.JFrame {
                     }
 
                     else if (temp1[lastIndex].equals(isWin)) {
-                        if (isConnected && ansWord != null) {
+                        if (isConnected && ansWord != null && !temp1[0].equals("null")) {
                             clientArea.append("The answer word is '" + ansWord + "'\n");
                             clientArea.append(temp1[0] + temp1[1] + "\n");
                             
@@ -216,7 +217,9 @@ public class clientFrame extends javax.swing.JFrame {
                     }
 
                     else if (temp1[lastIndex].equals(Exit)) {
-                        isConnected = false;
+                        if(temp1[0].equals(username)) {
+                            isConnected = false;
+                        }                     
                         clientArea.append(temp1[0] + " has left\n");
                     }
 
@@ -1140,7 +1143,6 @@ public class clientFrame extends javax.swing.JFrame {
         clientType.setText("");
         try {
             if (typingText.equals(ansWord) && !(isDraw)) {
-
                 output.println(username + "," + isWin);
                 output.println("time out" + "," + timeOut);
             }
