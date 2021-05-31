@@ -79,7 +79,6 @@ public class clientFrame extends javax.swing.JFrame {
                     drawScreen.repaint();
                     g.setColor(Color.black);
                     
-
                     
                     if (isConnected && !spectetor && ansWord != null) {
                         clientArea.append("The answer word is '" + ansWord + "'\n");
@@ -199,8 +198,11 @@ public class clientFrame extends javax.swing.JFrame {
                         if (!disconnect && !spectetor) {
                             clientArea.append("The answer word is '" + ansWord + "'\n");
                             clientArea.append(temp1[0] + temp1[1] + "\n");
-
+                        } else if(temp1[0].equals("null")) {
+                            clientArea.append("The answer word is '" + ansWord + "'\n");                          
                         }
+                        
+                        
 
                     }
 
@@ -985,8 +987,10 @@ public class clientFrame extends javax.swing.JFrame {
         if (startGame) {
             try {
                 if(isDraw) {
-                    output.println("time out" + "," + timeOut);
                     output.println(username + "," + Exit);
+                    output.println("null" + "," + isWin);  
+                    output.println("time out" + "," + timeOut);
+                                
                 } else {
                   output.println(username + "," + Exit);    
                 }
