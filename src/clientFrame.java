@@ -990,10 +990,11 @@ public class clientFrame extends javax.swing.JFrame {
 
         if (startGame) {
             try {
-                if(isDraw) {
+                if(isDraw) { 
+                    
+                    output.println("time out" + "," + timeOut);           
                     output.println(username + "," + Exit);
-                    output.println("null" + "," + isWin);  
-                    output.println("time out" + "," + timeOut);
+                    
                                 
                 } else {
                   output.println(username + "," + Exit);    
