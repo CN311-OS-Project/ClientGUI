@@ -868,7 +868,8 @@ public class clientFrame extends javax.swing.JFrame {
             ServerConnection connection = new ServerConnection(socket);
 
             username = userField.getText();
-
+            
+            ipField.setEditable(false);
             userField.setEditable(false);
             connectB.setEnabled(false);
             clientType.setEditable(true);
