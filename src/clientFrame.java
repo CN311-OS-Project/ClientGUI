@@ -195,9 +195,10 @@ public class clientFrame extends javax.swing.JFrame {
                     }
 
                     else if (temp1[lastIndex].equals(isWin)) {
-                        if (!disconnect && !spectetor) {
+                        if (isConnected && ansWord != null) {
                             clientArea.append("The answer word is '" + ansWord + "'\n");
                             clientArea.append(temp1[0] + temp1[1] + "\n");
+                            
                         } else if(temp1[0].equals("null")) {
                             clientArea.append("The answer word is '" + ansWord + "'\n");                          
                         }
@@ -215,7 +216,7 @@ public class clientFrame extends javax.swing.JFrame {
                     }
 
                     else if (temp1[lastIndex].equals(Exit)) {
-                        disconnect = true;
+                        isConnected = false;
                         clientArea.append(temp1[0] + " has left\n");
                     }
 
