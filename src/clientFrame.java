@@ -81,7 +81,7 @@ public class clientFrame extends javax.swing.JFrame {
                     
 
                     
-                    if (isConnected && !spectetor) {
+                    if (isConnected && !spectetor && ansWord != null) {
                         clientArea.append("The answer word is '" + ansWord + "'\n");
                     }
                     if (isDraw) {
@@ -196,7 +196,7 @@ public class clientFrame extends javax.swing.JFrame {
                     }
 
                     else if (temp1[lastIndex].equals(isWin)) {
-                        if (!disconnect) {
+                        if (!disconnect && ansWord != null) {
                             clientArea.append("The answer word is '" + ansWord + "'\n");
                             clientArea.append(temp1[0] + temp1[1] + "\n");
 
@@ -885,8 +885,7 @@ public class clientFrame extends javax.swing.JFrame {
             userField.setEditable(false);
             connectB.setEnabled(false);
             clientType.setEditable(true);
-            waitLebel.setText("Waiting For Player...");
-            clientArea.append("My name " + username + "\n");                     
+            waitLebel.setText("Waiting For Player...");                    
             new Thread(connection).start();
 
         } catch (IOException ex) {
