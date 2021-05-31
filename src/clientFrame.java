@@ -196,7 +196,7 @@ public class clientFrame extends javax.swing.JFrame {
                     }
 
                     else if (temp1[lastIndex].equals(isWin)) {
-                        if (!disconnect && ansWord != null) {
+                        if (!disconnect && !spectetor) {
                             clientArea.append("The answer word is '" + ansWord + "'\n");
                             clientArea.append(temp1[0] + temp1[1] + "\n");
 
@@ -986,8 +986,10 @@ public class clientFrame extends javax.swing.JFrame {
             try {
                 if(isDraw) {
                     output.println("time out" + "," + timeOut);
+                    output.println(username + "," + Exit);
+                } else {
+                  output.println(username + "," + Exit);    
                 }
-                output.println(username + "," + Exit);
                 output.close();
                 socket.close();
                 System.exit(0);
