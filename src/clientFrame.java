@@ -464,8 +464,8 @@ public class clientFrame extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(33, 33, 33)
-                .addComponent(turnLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addComponent(turnLebel, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -523,7 +523,7 @@ public class clientFrame extends javax.swing.JFrame {
             }
         });
 
-        waitLebel.setFont(new java.awt.Font("Leelawadee", 0, 36)); // NOI18N
+        waitLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         waitLebel.setText("Waiting For Connect...");
 
         javax.swing.GroupLayout drawScreenLayout = new javax.swing.GroupLayout(drawScreen);
@@ -621,7 +621,7 @@ public class clientFrame extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(102, 153, 255));
         jPanel2.setForeground(new java.awt.Color(51, 153, 255));
 
-        ansLebel.setFont(new java.awt.Font("Leelawadee", 0, 40)); // NOI18N
+        ansLebel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         ansLebel.setForeground(new java.awt.Color(51, 51, 51));
         ansLebel.setLabelFor(this);
         ansLebel.setText("            ");
@@ -631,15 +631,15 @@ public class clientFrame extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(280, Short.MAX_VALUE)
-                .addComponent(ansLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(230, 230, 230))
+                .addContainerGap(283, Short.MAX_VALUE)
+                .addComponent(ansLebel, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(56, 56, 56))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(ansLebel)
-                .addGap(0, 1, Short.MAX_VALUE))
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 860, 50));
@@ -1129,7 +1129,7 @@ public class clientFrame extends javax.swing.JFrame {
 
     /** Receive x,y from server to draw in drawScreen **/
     private void sendData_chat() {
-        typingText = clientType.getText();
+        typingText = clientType.getText().toLowerCase();       
         output.println(username + "," + typingText + "," + Chat);
         clientType.setText("");
         try {
