@@ -879,7 +879,7 @@ public class clientFrame extends javax.swing.JFrame {
     // Connect to server
     private void connectBActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_connectBActionPerformed
         // TODO add your handling code here:
-        clientArea.append("Connecting to server...\n");
+        clientArea.append("Connected to server...\n");
         try {
             SERVER_IP = ipField.getText();
             socket = new Socket(SERVER_IP, SERVER_PORT);
