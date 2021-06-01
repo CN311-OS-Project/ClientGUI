@@ -1144,6 +1144,7 @@ public class clientFrame extends javax.swing.JFrame {
         clientType.setText("");
         try {
             if (typingText.equals(ansWord) && !(isDraw)) {
+                
                 output.println(username + "," + isWin);
                 output.println("time out" + "," + timeOut);
             }
